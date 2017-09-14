@@ -1,0 +1,88 @@
+apply plugin: 'com.android.application'
+
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmm')
+    return formattedDate
+}
+
+def verCode = 14
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.yangli.sdk.demo.textdemo"
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+
+    }
+
+    signingConfigs {
+        signingConfig {
+            storeFile file("$rootDir/readme/talkeer_release.jks")
+            storePassword "release.2016.talkeer.com"
+            keyAlias "talkeer"
+            keyPassword "release.2016.talkeer.com"
+        }
+    }
+
+    buildTypes {
+        release {
+
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+
+        }
+    }
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+    //修改生成的apk名字
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def newName
+            def timeNow
+            def oldFile = output.outputFile
+            def outDirectory = oldFile.parent
+
+            if ("true".equals(false)) {
+                timeNow = JENKINS_TIME
+                outDirectory = 'G:/Tomcat/webapps/jenkins/apk'
+                newName = 'yj-android-v' +
+                        buildToolsVersion + '-' + variant.productFlavors[0].name + timeNow + '-' + variant.buildType.name + '.apk'
+            } else {
+                timeNow = getDate()
+                if (variant.buildType.name.equals('debug')) {
+                    newName = "yj-android-v${buildToolsVersion}-debug.apk"
+                } else {
+                    newName = 'yj-android-v' + buildToolsVersion + '-' + timeNow + '-' + variant.buildType.name + '.apk'
+                }
+            }
+
+            output.outputFile = new File(outDirectory, newName)
+
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:design:25.3.1'
+    testCompile 'junit:junit:4.12'
+}

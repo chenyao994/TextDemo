@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TextDemo</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_user_list">UserListActivity</string>
+    <string name="title_activity_topic_list">TopicListActivity</string>
+    <string name="title_activity_dialog">DialogActivity</string>
+</resources>
